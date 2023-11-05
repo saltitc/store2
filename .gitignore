@@ -87,6 +87,6 @@ local_settings.py
 
 .env
 db.sqlite3
-/__pycache__
 .vscode/
 .pylintrc
+users_images/
