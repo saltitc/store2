@@ -11,13 +11,58 @@
     <div class="row">
       <div class="col-lg-3">
         <h1 class="my-4">Каталог</h1>
-        <div class="list-group">
-          {% for category in categories %}
-            <a href="" class="list-group-item">{{ category.name }}</a>
-          {% endfor %}
-        </div>
+        {% comment %}Filters block{% endcomment %}
+        <form method="get" action="">
+          <div id="filter" class="p-2 bg-light ms-md-4 ms-sm-2 rounded">
+            <div class="border-bottom h5">Фильтры</div>
+            <div class="box border-bottom mt-2">
+              <div class="box-label d-flex align-items-center">
+                <div class="my-1">{{ form.category.label_tag }} {{ form.category }}</div>
+              </div>
+            </div>
+
+            <div class="box border-bottom">
+              <div class="box-label d-flex align-items-center">
+                <div class="my-1">
+                  <label for="min_price">Минимальная цена</label>
+                  <input type="range" name="price_min" id="min_price" value="0" min="0" max="100000" />
+                </div>
+                <div class="form-group col-md-4">
+                  <output class="form-range-output" for="min_price">0</output>
+                </div>
+              </div>
+            </div>
+
+            <div class="box border-bottom">
+              <div class="box-label d-flex align-items-center">
+                <div class="my-1">
+                  <label for="max_price">Максимальная цена</label>
+                  <input type="range" name="price_max" id="max_price" value="100000" min="0" max="100000" />
+                </div>
+                <div class="form-group col-md-4">
+                  <output class="form-range-output" for="max_price">0</output>
+                </div>
+              </div>
+            </div>
+            <div class="box border-bottom">
+              <div class="my-1">
+                <label for="min_rating" class="pt-1">Минимальный рейтинг:</label>
+                <select name="min_rating" id="min_rating" class="form-control py-4">
+                  <option value="">Любой</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-2">Применить фильтры</button>
+          </div>
+        </form>
+        {% comment %}End of filters block{% endcomment %}
       </div>
-      <!-- /.col-lg-3 -->
 
       <div class="col-lg-9">
         <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
@@ -58,7 +103,7 @@
                   <p class="card-text">{{ product.description }}</p>
                 </div>
                 <div class="card-footer text-center">
-                  <a class="btn btn-outline-success" href="{% url "products:cart_add" product.id %}">Добавить в корзину</a>
+                  <a class="btn btn-outline-success" href="{% url 'products:cart_add' product.id %}">Добавить в корзину</a>
                 </div>
               </div>
             </div>
@@ -69,7 +114,8 @@
             <nav aria-label="Paginate me">
               <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
-                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Предыдущая</a>
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}
+                    {% if params %}{{ params }}{% endif %}" tabindex="-1">Предыдущая</a>
                 {% else %}
                   <li class="page-item disabled">
                     <a class="page-link disabled" href="#" tabindex="-1">Предыдущая</a>
@@ -78,16 +124,16 @@
                 {% for i in page_obj.paginator.page_range %}
                   {% if i == page_obj.number %}
                     <li class="page-item active">
-                      <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                      <a class="page-link" href="?page={{ i }}{% if params %}{{ params }}{% endif %}">{{ i }}</a>
                     </li>
                   {% else %}
                     <li class="page-item">
-                      <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                      <a class="page-link" href="?page={{ i }}{% if params %}{{ params }}{% endif %}">{{ i }}</a>
                     </li>
                   {% endif %}
                 {% endfor %}
                 {% if page_obj.has_next %}
-                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if params %}{{ params }}{% endif %}">Следующая</a>
                 {% else %}
                   <li class="page-item disabled">
                     <a class="page-link" href="#">Следующая</a>
@@ -110,4 +156,24 @@
     </div>
     <!-- /.container -->
   </footer>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const priceRange = document.getElementById('min_price')
+    const priceRangeOutput = document.querySelector(".form-range-output[for='min_price']")
+    
+    priceRange.addEventListener('input', function () {
+      priceRangeOutput.value = priceRange.value
+    })
+  </script>
+
+  <script>
+    const maxpriceRange = document.getElementById('max_price')
+    const maxpriceRangeOutput = document.querySelector(".form-range-output[for='max_price']")
+    
+    maxpriceRange.addEventListener('input', function () {
+      maxpriceRangeOutput.value = maxpriceRange.value
+    })
+  </script>
 {% endblock %}
