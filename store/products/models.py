@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=128, unique=True)
@@ -29,4 +31,27 @@ class Product(models.Model):
         verbose_name_plural = "Products"
 
     def __str__(self):
-        return f"Продукт: {self.name} | Категория: {self.category.name}"
+        return f"Продукт: {self.title} | Категория: {self.category.name}"
+
+
+class CartQuerySet(models.QuerySet):
+    def get_total_cart_cost(self):
+        return sum(cart_item.get_item_cost() for cart_item in self)
+
+    def total_amount(self):
+        return sum(cart_item.quantity for cart_item in self)
+
+
+class CartItem(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField(default=0)
+
+    objects = CartQuerySet.as_manager()
+
+    def __str__(self):
+        return f"{self.product.title} в корзине пользователя @{self.user.username}"
+
+    def get_item_cost(self):
+        return self.product.price * self.quantity
+    

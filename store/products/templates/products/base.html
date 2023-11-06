@@ -36,9 +36,9 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 
-                {% comment %} <li class="nav-item">
-                    <a class="nav-link" href="#">Текст</a>
-                </li> {% endcomment %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'products:products' %}">Каталог <i class="fas fa-shopping-bag"></i> </a>
+                </li>
 
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
@@ -49,6 +49,9 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li>
                                 <a class="dropdown-item" href="{% url 'users:profile' user.id %}">Профиль</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Заказы</a>
                             </li>
                             {% if user.is_superuser or user.is_staff %}
                             <li>

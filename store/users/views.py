@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView
 
 from common.views import TitleMixin
+from products.models import CartItem
 
 from .forms import UserLoginForm, UserProfileForm, UserRegistrationForm
 from .models import EmailVerification, User
@@ -40,6 +41,11 @@ class UserProfileView(TitleMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("users:profile", args=(self.object.id,))
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['cart_items'] = CartItem.objects.filter(user=self.object)
+        return context
 
 
 class EmailVerificationView(TitleMixin, TemplateView):
