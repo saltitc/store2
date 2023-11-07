@@ -13,6 +13,7 @@ class ProductAdmin(admin.ModelAdmin):
         "description",
         ("price", "amount"),
         "image",
+        "stripe_product_price_id",
         "category",
         "rating",
     )

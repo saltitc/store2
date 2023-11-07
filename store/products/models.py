@@ -1,6 +1,9 @@
+import stripe
 from django.db import models
-
+from django.conf import settings
 from users.models import User
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class ProductCategory(models.Model):
@@ -25,6 +28,7 @@ class Product(models.Model):
         to=ProductCategory, null=True, on_delete=models.SET_NULL
     )
     rating = models.PositiveSmallIntegerField(default=0)
+    stripe_product_price_id = models.CharField(max_length=128, null=True, blank=True)
 
     class Meta:
         verbose_name = "Product"
@@ -33,6 +37,25 @@ class Product(models.Model):
     def __str__(self):
         return f"Продукт: {self.title} | Категория: {self.category.name}"
 
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        if not self.stripe_product_price_id:
+            stripe_product_price = self.create_stripe_product_price()
+            self.stripe_product_price_id = stripe_product_price["id"]
+        super().save(
+            force_insert=False, force_update=False, using=None, update_fields=None
+        )
+
+    def create_stripe_product_price(self):
+        stripe_product = stripe.Product.create(name=self.title)
+        stripe_product_price = stripe.Price.create(
+            product=stripe_product["id"],
+            unit_amount=round(self.price * 100),
+            currency="rub",
+        )
+        return stripe_product_price
+
 
 class CartQuerySet(models.QuerySet):
     def get_total_cart_cost(self):
@@ -40,6 +63,16 @@ class CartQuerySet(models.QuerySet):
 
     def total_amount(self):
         return sum(cart_item.quantity for cart_item in self)
+
+    def stripe_products(self):
+        line_items = []
+        for cart_item in self:
+            item = {
+                "price": cart_item.product.stripe_product_price_id,
+                "quantity": cart_item.quantity,
+            }
+            line_items.append(item)
+        return line_items
 
 
 class CartItem(models.Model):
@@ -54,4 +87,12 @@ class CartItem(models.Model):
 
     def get_item_cost(self):
         return self.product.price * self.quantity
-    
+
+    def de_json(self):
+        cart_item = {
+            "product_title": self.product.title,
+            "quantity": self.quantity,
+            "price": float(self.product.price),
+            "sum": float(self.get_item_cost()),
+        }
+        return cart_item

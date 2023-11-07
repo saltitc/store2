@@ -8,25 +8,37 @@ from django.utils.timezone import now
 
 
 class User(AbstractUser):
-    MALE = 'M'
-    FEMALE = 'F'
+    MALE = "M"
+    FEMALE = "F"
 
     GENDER_CHOICES = [
-        (MALE, 'Мужской'),
-        (FEMALE, 'Женский'),
+        (MALE, "Мужской"),
+        (FEMALE, "Женский"),
     ]
 
     phone = models.CharField(
-        max_length=15, null=True, verbose_name='Телефон', validators=[RegexValidator(
-            regex=r'\b\+?[7,8](\s*\d{3}\s*\d{3}\s*\d{2}\s*\d{2})\b',
-            message='Неверный формат номера телефона.'
-        )])
-    image = models.ImageField(upload_to='users_images', null=True, blank=True)
-    gender = models.CharField(max_length=2, verbose_name='Пол', choices=GENDER_CHOICES, default=MALE)
+        max_length=15,
+        null=True,
+        verbose_name="Телефон",
+        validators=[
+            RegexValidator(
+                regex=r"\b\+?[7,8](\s*\d{3}\s*\d{3}\s*\d{2}\s*\d{2})\b",
+                message="Неверный формат номера телефона.",
+            )
+        ],
+    )
+    image = models.ImageField(upload_to="users_images", null=True, blank=True)
+    gender = models.CharField(
+        max_length=2, verbose_name="Пол", choices=GENDER_CHOICES, default=MALE
+    )
     is_verified_email = models.BooleanField(default=False)
-    email = models.EmailField(unique=True, verbose_name='Эл. почта', error_messages={
-        'unique': "Аккаунт с данной электронной почтой уже существует.",
-    })
+    email = models.EmailField(
+        unique=True,
+        verbose_name="Эл. почта",
+        error_messages={
+            "unique": "Аккаунт с данной электронной почтой уже существует.",
+        },
+    )
 
 
 class EmailVerification(models.Model):
@@ -40,11 +52,14 @@ class EmailVerification(models.Model):
 
     def send_verification_email(self):
         # generates a verification link
-        link = reverse('users:email_verification', kwargs={'email': self.user.email, 'code': self.code})
-        verification_link = f'{settings.DOMAIN_NAME}{link}'
+        link = reverse(
+            "users:email_verification",
+            kwargs={"email": self.user.email, "code": self.code},
+        )
+        verification_link = f"{settings.DOMAIN_NAME}{link}"
 
-        subject = f'Подтверждение учетной записи для {self.user.username}'
-        message = 'Для подтверждения учетной записи для {self.user.email} перейдите по ссылке {verification_link}'
+        subject = f"Подтверждение учетной записи для {self.user.username}"
+        message = f"Для подтверждения учетной записи для {self.user.email} перейдите по ссылке {verification_link}"
         # send email
         send_mail(
             subject=subject,

@@ -34,7 +34,7 @@
             <h4 class="float-right"> {{ cart_items.get_total_cart_cost|intcomma }} руб.</h4>
         </div>
     </div>
-    <a class="btn btn-success btn-lg float-right" href="#">
+    <a class="btn btn-success btn-lg float-right" href="{% url "orders:create" %}">
         Оформить заказ
     </a>
 {% else %}
