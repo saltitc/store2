@@ -1,3 +1,5 @@
+from django.core.cache import cache
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.views.generic.base import TemplateView
 from common.views import TitleMixin
@@ -19,17 +21,22 @@ class ProductsListView(TitleMixin, ListView):
     context_object_name = "products"
     paginate_by = 3
     title = "Каталог"
-    form_class = ProductFilterForm  # Добавьте форму для фильтрации
+    form_class = ProductFilterForm
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        category_filter = self.request.GET.get(
-            "category"
-        )  # Получите значение параметра 'category' из запроса
+
+        words_to_search = self.request.GET.get("q")
+        category_filter = self.request.GET.get("category")
         min_price = self.request.GET.get("price_min")
         max_price = self.request.GET.get("price_max")
         min_rating = self.request.GET.get("min_rating")
 
+        if words_to_search:
+            queryset = queryset.filter(
+                Q(title__icontains=words_to_search)
+                | Q(description__icontains=words_to_search)
+            )
         if category_filter:
             queryset = queryset.filter(category=category_filter)
         if min_price:

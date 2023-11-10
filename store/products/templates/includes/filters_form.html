@@ -1,0 +1,51 @@
+<form method="get" action="">
+  <div id="filter" class="p-2 bg-light ms-md-4 ms-sm-2 rounded">
+    <div class="border-bottom h5">Фильтры</div>
+    <input name="q" type="text" class="form-control mr-sm-2" placeholder="Поиск" aria-label="Поиск" />
+
+    <div class="box border-bottom mt-2">
+      <div class="box-label d-flex align-items-center">
+        <div class="my-1">{{ form.category.label_tag }} {{ form.category }}</div>
+      </div>
+    </div>
+
+    <div class="box border-bottom">
+      <div class="box-label d-flex align-items-center">
+        <div class="my-1">
+          <label for="min_price">Минимальная цена</label>
+          <input type="range" name="price_min" id="min_price" value="0" min="0" max="100000" />
+        </div>
+        <div class="form-group col-md-4">
+          <output class="form-range-output" for="min_price">0</output>
+        </div>
+      </div>
+    </div>
+
+    <div class="box border-bottom">
+      <div class="box-label d-flex align-items-center">
+        <div class="my-1">
+          <label for="max_price">Максимальная цена</label>
+          <input type="range" name="price_max" id="max_price" value="100000" min="0" max="100000" />
+        </div>
+        <div class="form-group col-md-4">
+          <output class="form-range-output" for="max_price">0</output>
+        </div>
+      </div>
+    </div>
+    <div class="box border-bottom">
+      <div class="my-1">
+        <label for="min_rating" class="pt-1">Минимальный рейтинг:</label>
+        <select name="min_rating" id="min_rating" class="form-control py-4">
+          <option value="">Любой</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Применить фильтры</button>
+  </div>
+</form>

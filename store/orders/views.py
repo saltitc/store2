@@ -24,8 +24,9 @@ class SuccessTemplateView(TitleMixin, TemplateView):
     title = "Спасибо за заказ"
 
 
-class CanceledTemplateView(TemplateView):
+class CanceledTemplateView(TitleMixin, TemplateView):
     template_name = "orders/canceled.html"
+    title = 'Заказ отменен'
 
 
 class OrderListView(TitleMixin, ListView):

@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Checkout canceled</title>
-</head>
-<body>
-    <p>Forgot to add something to your cart? Shop around then come back to pay!</p>
-</body>
-</html>
+{% extends 'products/base.html' %}
+{% load humanize %}
+
+{% block content %}
+  <section>
+    <div class="container">
+      <div class="py-5 text-center">
+        <h1>Заказ отменен</h1>
+      </div>
+      <div class="row">
+        <div class="col-12 col-lg-6 col-xl-7 offset-xl-1">
+            <a href="{% url 'users:profile' user.id %}" class="btn btn-dark btn-lg action-button" type="button">
+                Корзина
+            </a>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-2 offset-xl-1">
+            <a href="{% url 'orders:create' %}" class="btn btn-dark btn-lg action-button" type="button">
+                Заказ
+            </a>
+        </div>
+    </div>
+    </div>
+  </section>
+{% endblock %}
