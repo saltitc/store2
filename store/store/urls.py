@@ -10,6 +10,7 @@ urlpatterns = [
     path("orders/", include("orders.urls", namespace="orders")),
     path("users/", include("users.urls", namespace="users")),
     path("webhook/stripe/", stripe_webhook_view, name="stripe_webhook"),
+    path("accounts/", include("allauth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
