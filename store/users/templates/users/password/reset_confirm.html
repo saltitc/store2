@@ -1,0 +1,66 @@
+{% extends 'products/base.html' %} {% block content %}
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-5">
+      <!-- Alerts -->
+      {% if messages or form.non_field_errors %}
+      <div
+        class="alert alert-info alert-dismissible fade show"
+        role="alert"
+        style="margin-top: 50px"
+      >
+        {% if messages %} {% for message in messages %} {{ message }} {%endfor%}
+        {% else %} {{ form.non_field_errors }} {% endif %}
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endif %}
+      <!-- End alerts -->
+      <div class="card shadow-lg border-0 rounded-lg mt-5">
+        <div class="card-header">
+          <h3 class="text-center font-weight-light my-4">
+            Восстановление пароля
+          </h3>
+        </div>
+        <div class="card-body">
+          <!-- Password reset form -->
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-outline mb-2">
+              <label
+                class="small mb-1"
+                for="{{ form.new_password1.id_for_label }}"
+                >Новый пароль:</label
+              >
+              <div class="form-outline mb-2">{{ form.new_password1 }}</div>
+              <label
+                class="small mb-1"
+                for="{{ form.new_password2.id_for_label }}"
+                >Подтвердите пароль:</label
+              >
+              <div class="form-outline mb-2">{{ form.new_password2 }}</div>
+            </div>
+            <div
+              class="form-group d-flex align-items-center justify-content-between mt-4 mb-0"
+            >
+              <input
+                class="btn btn-success"
+                type="submit"
+                value="Сменить пароль"
+              />
+            </div>
+          </form>
+          <!-- End form -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

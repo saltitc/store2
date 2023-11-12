@@ -1,7 +1,9 @@
 import stripe
 from django.db import models
 from django.conf import settings
-from users.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -24,9 +26,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     amount = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to="products_images")
-    category = models.ForeignKey(
-        to=ProductCategory, null=True, on_delete=models.SET_NULL
-    )
+    category = models.ForeignKey(to=ProductCategory, null=True, on_delete=models.SET_NULL)
     rating = models.PositiveSmallIntegerField(default=0)
     stripe_product_price_id = models.CharField(max_length=128, null=True, blank=True)
 
@@ -37,15 +37,11 @@ class Product(models.Model):
     def __str__(self):
         return f"Продукт: {self.title} | Категория: {self.category.name}"
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.stripe_product_price_id:
             stripe_product_price = self.create_stripe_product_price()
             self.stripe_product_price_id = stripe_product_price["id"]
-        super().save(
-            force_insert=False, force_update=False, using=None, update_fields=None
-        )
+        super().save(force_insert=False, force_update=False, using=None, update_fields=None)
 
     def create_stripe_product_price(self):
         stripe_product = stripe.Product.create(name=self.title)

@@ -1,0 +1,15 @@
+{% load i18n %}{% autoescape off %}
+{% blocktranslate %}Вы получили это сообщение потому что для вашего аккаунта на сайте {{ site_name }} был запрошен сброс пароля. Если это делали не вы, просто проигнорируйте данное сообщение{% endblocktranslate %}
+
+
+{% translate "Пройдите по ссылке и задайте новый пароль:" %}
+{% block reset_link %}
+{{ protocol }}://{{ domain }}{% url 'users:password_reset_confirm' uidb64=uid token=token %}
+{% endblock %}
+{% translate 'Ваш юзернейм:' %} {{ user.get_username }}
+
+
+
+{% blocktranslate %}Команда {{ site_name }}{% endblocktranslate %}
+
+{% endautoescape %}

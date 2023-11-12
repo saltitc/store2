@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "users",
     "orders",
     "debug_toolbar",
+    "captcha",
 ]
 
 MIDDLEWARE = [
@@ -159,6 +160,7 @@ EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -202,3 +204,9 @@ SOCIALACCOUNT_PROVIDERS = {
         "SCOPE": ["user"],
     }
 }
+
+
+# reCAPTCHA
+
+RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")

@@ -1,4 +1,3 @@
-from django.core.cache import cache
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.views.generic.base import TemplateView
@@ -33,10 +32,7 @@ class ProductsListView(TitleMixin, ListView):
         min_rating = self.request.GET.get("min_rating")
 
         if words_to_search:
-            queryset = queryset.filter(
-                Q(title__icontains=words_to_search)
-                | Q(description__icontains=words_to_search)
-            )
+            queryset = queryset.filter(Q(title__icontains=words_to_search) | Q(description__icontains=words_to_search))
         if category_filter:
             queryset = queryset.filter(category=category_filter)
         if min_price:
