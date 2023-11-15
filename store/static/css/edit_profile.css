@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
+
+
+
+.card {
+
+    width: 600px;
+    padding: 15px;
+    border: none;
+}
+
+.notify-text {
+
+    font-size: 14px;
+
+}
+
+.buttons {
+
+    font-size: 12px;
+    height: 32px;
+}
+
+.form-check-label {
+    font-size: 14px;
+
+}
+
+.accounts {
+
+    font-size: 14px;
+}
+
+.outline {
+
+    border: 1px solid #e3eae6;
+    border-radius: 5px;
+    background: #f4fcf8;
+    margin-top: 10px;
+}
+
+
+.image-size {
+    font-size: 12px;
+    color: #9c9c9c;
+    margin-top: 7px;
+}

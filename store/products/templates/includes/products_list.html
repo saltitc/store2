@@ -10,16 +10,15 @@
         <h5>{{ product.price|intcomma }} руб.</h5>
         <p class="card-text">{{ product.description }}</p>
         <div class="d-flex flex-row my-3">
-            <div class="text-warning mb-1 me-2">
-              {% for _ in product.average_rating|range %}
-                <i class="fa fa-star"></i>
-              {% endfor %}
-              {% for _ in product.average_rating|range:5 %}
+          <div class="text-warning mb-1 me-2">
+            {% for _ in product.average_rating|range %}
+              <i class="fa fa-star"></i>
+            {% endfor %}
+            {% for _ in product.average_rating|range:5 %}
               <i class="far fa-star"></i>
-              {% endfor %}
-
-            </div>
+            {% endfor %}
           </div>
+        </div>
       </div>
       <div class="card-footer text-center">
         <a class="btn btn-outline-success" href="{% url 'products:cart_add' product.id %}">Добавить в корзину</a>

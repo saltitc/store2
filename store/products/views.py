@@ -1,11 +1,14 @@
+from typing import Any
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.db.models.query import QuerySet
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from common.views import TitleMixin
 from django.views.generic import ListView, DetailView, FormView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 
 from .forms import ProductFilterForm, RatingForm
@@ -88,6 +91,17 @@ class RateProductView(FormView):
         return reverse_lazy("products:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
+class CartView(ListView):
+    model = CartItem
+    template_name = "products/cart.html"
+    context_object_name = "cart_items"
+
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user=self.request.user)
+        return queryset
+
+
 @login_required
 def cart_add(request, product_id):
     product = Product.objects.get(id=product_id)
@@ -108,3 +122,18 @@ def cart_remove(request, cart_item_id):
     cart_item = CartItem.objects.get(id=cart_item_id)
     cart_item.delete()
     return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+
+@require_POST
+def update_cart_item_quantity(request):
+    try:
+        product_id = request.POST.get("product_id")
+        quantity = request.POST.get("quantity")
+
+        cart_item = CartItem.objects.get(product_id=product_id, user=request.user)
+        cart_item.quantity = quantity
+        cart_item.save()
+
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})

@@ -28,9 +28,7 @@ class User(AbstractUser):
         ],
     )
     image = models.ImageField(upload_to="users_images", null=True, blank=True)
-    gender = models.CharField(
-        max_length=2, verbose_name="Пол", choices=GENDER_CHOICES, default=MALE
-    )
+    gender = models.CharField(max_length=2, verbose_name="Пол", choices=GENDER_CHOICES, default=MALE)
     is_verified_email = models.BooleanField(default=False)
     email = models.EmailField(
         unique=True,
@@ -39,6 +37,9 @@ class User(AbstractUser):
             "unique": "Аккаунт с данной электронной почтой уже существует.",
         },
     )
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"
 
 
 class EmailVerification(models.Model):

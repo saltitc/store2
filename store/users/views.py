@@ -2,7 +2,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import HttpResponseRedirect, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib import messages
@@ -34,24 +34,25 @@ class UserRegistrationView(TitleMixin, SuccessMessageMixin, CreateView):
     title = "Регистрация"
 
 
-class UserProfileView(TitleMixin, UpdateView):
+class UserProfileView(TitleMixin, DetailView):
     model = User
-    form_class = UserProfileForm
     template_name = "users/profile.html"
     title = "Профиль"
+
+
+class EditUserProfileView(TitleMixin, UpdateView):
+    model = User
+    form_class = UserProfileForm
+    template_name = "users/edit_profile.html"
+    title = "Редактирование профиля"
 
     def dispatch(self, *args, **kwargs):
         if self.request.user != self.get_object():
             return redirect("users:profile", pk=self.request.user.id)
-        return super(UserProfileView, self).dispatch(*args, **kwargs)
+        return super(EditUserProfileView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy("users:profile", args=(self.object.id,))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context["cart_items"] = CartItem.objects.filter(user=self.object)
-        return context
 
 
 class EmailVerificationView(TitleMixin, TemplateView):
