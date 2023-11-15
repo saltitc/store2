@@ -26,7 +26,7 @@ class SuccessTemplateView(TitleMixin, TemplateView):
 
 class CanceledTemplateView(TitleMixin, TemplateView):
     template_name = "orders/canceled.html"
-    title = 'Заказ отменен'
+    title = "Заказ отменен"
 
 
 class OrderListView(TitleMixin, ListView):
@@ -44,7 +44,7 @@ class OrderListView(TitleMixin, ListView):
 class OrderDetailView(DetailView):
     template_name = "orders/order.html"
     model = Order
-    context_object_name = 'order'
+    context_object_name = "order"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -83,9 +83,7 @@ def stripe_webhook_view(request):
     event = None
 
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-        )
+        event = stripe.Webhook.construct_event(payload, sig_header, settings.STRIPE_WEBHOOK_SECRET)
     except ValueError as e:
         # Invalid payload
         return HttpResponse(status=400)

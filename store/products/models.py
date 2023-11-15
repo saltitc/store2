@@ -27,7 +27,7 @@ class Product(models.Model):
     amount = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to="products_images")
     category = models.ForeignKey(to=ProductCategory, null=True, on_delete=models.SET_NULL)
-    rating = models.PositiveSmallIntegerField(default=0)
+    average_rating = models.PositiveSmallIntegerField(default=0, null=True)
     stripe_product_price_id = models.CharField(max_length=128, null=True, blank=True)
 
     class Meta:
@@ -51,6 +51,11 @@ class Product(models.Model):
             currency="rub",
         )
         return stripe_product_price
+
+    def update_average_rating(self):
+        average_rating = Rating.objects.filter(product=self.id).aggregate(models.Avg("rating"))["rating__avg"]
+        self.average_rating = average_rating
+        self.save()
 
 
 class CartQuerySet(models.QuerySet):
@@ -92,3 +97,12 @@ class CartItem(models.Model):
             "sum": float(self.get_item_cost()),
         }
         return cart_item
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField()
+
+    class Meta:
+        unique_together = ("user", "product")

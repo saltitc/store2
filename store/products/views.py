@@ -1,12 +1,15 @@
 from django.db.models import Q
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from common.views import TitleMixin
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView, FormView
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
-from .forms import ProductFilterForm
-from .models import CartItem, Product, ProductCategory
+
+from .forms import ProductFilterForm, RatingForm
+from .models import CartItem, Product, ProductCategory, Rating
 
 
 class IndexView(TitleMixin, TemplateView):
@@ -52,6 +55,37 @@ class ProductsListView(TitleMixin, ListView):
             del params["page"]
         context["params"] = "&" + params.urlencode()
         return context
+
+
+class ProductDetailView(TitleMixin, DetailView):
+    title = ""
+    template_name = "products/product_detail.html"
+    model = Product
+    context_object_name = "product"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user = self.request.user
+        product = context["product"]
+        is_rated = Rating.objects.filter(user=user, product=product).exists()
+
+        context["is_rated"] = is_rated
+        context["form"] = RatingForm
+        return context
+
+
+class RateProductView(FormView):
+    template_name = None
+    form_class = RatingForm
+
+    def form_valid(self, form):
+        messages.success(self.request, f"{self.request.user.first_name}, спасибо за оставленную вами оценку!")
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("products:detail", kwargs={"pk": self.kwargs["pk"]})
 
 
 @login_required

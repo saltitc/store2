@@ -15,10 +15,7 @@
             <div class="col-lg-5">
               <!-- Alerts -->
               {% if messages or form.non_field_errors %}
-                <div class="alert
-                                {% if messages %} alert-success {% else %} alert-warning {% endif %}
-                             alert-dismissible fade show" role="alert"
-                                 style="margin-top: 50px;">
+                  <div class="alert {% if messages %} alert-success {% else %} alert-warning {% endif %} alert-dismissible fade show" role="alert" style="margin-top: 50px;">
                   {% if messages %}
                     {% for message in messages %}
                       {{ message }}
