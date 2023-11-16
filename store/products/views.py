@@ -46,7 +46,7 @@ class ProductsListView(TitleMixin, ListView):
         if max_price:
             queryset = queryset.filter(price__lte=max_price)
         if min_rating:
-            queryset = queryset.filter(rating__gte=min_rating)
+            queryset = queryset.filter(average_rating__gte=min_rating)
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):

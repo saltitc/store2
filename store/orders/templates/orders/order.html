@@ -1,14 +1,21 @@
 {% extends 'products/base.html' %}
+{% load static %}
 {% load humanize %}
+
+{% block css %}
+  <link href="{% static 'css/orders.css' %}" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
   <section>
     <div class="container pt-5">
       <div class="text-center mt-5">
-        <h1>Заказ #{{ order.id }}</h1>
+        <h1>Заказ №{{ order.id }} от {{order.created|date:"d.m.Y"}} г.</h1>
         <div class="orders mt-5">
-          <table class="table">
+          <table class="table table-dark table-bordered mb-0">
             <thead>
               <tr>
+                <th scope="col">№</th>
                 <th scope="col">Название</th>
                 <th scope="col">Кол-во</th>
                 <th scope="col">Цена</th>
@@ -18,7 +25,9 @@
             <tbody>
               {% for purchased_item in order.cart_history.purchased_items %}
                 <tr>
-                  <th scope="row">{{ purchased_item.product_title }}</th>
+
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>{{ purchased_item.product_title }}</td>
                   <td>{{ purchased_item.quantity }}</td>
                   <td>{{ purchased_item.price|intcomma }} руб.</td>
                   <td>{{ purchased_item.get_item_cost|intcomma }} руб.</td>
