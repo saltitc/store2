@@ -1,0 +1,159 @@
+{% extends 'products/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load my_filters %}
+{% block css %}
+  <link href="{% static 'css/wishlist.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+  <section class="">
+    <div class="container">
+      <div class="row">
+        <!-- content -->
+        <div class="col-lg-9">
+          {% if favorite_products %}
+            <h2 class="d-block py-2 text-center">Избранное</h2>
+            <div id="no-favorites-message" class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 50px; display: none;">
+              Вы удалили все избранные товары
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+
+            {% for favorite_product in favorite_products %}
+              <div id="favorite-product-{{ favorite_product.product.id }}" class="row justify-content-center mb-3">
+                <div class="col-md-12">
+                  <div class="card shadow-0 border rounded-3">
+                    <div class="card-body">
+                      <div class="row g-0">
+                        <div class="col-xl-3 col-md-4 d-flex justify-content-center">
+                          <div class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                            <img src="{{ favorite_product.product.image.url }}" class="w-100" />
+                            <a href="#!">
+                              <div class="hover-overlay">
+                                <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="col-xl-6 col-md-5 col-sm-7">
+                          <h5><a href="{% url 'products:detail' favorite_product.product.id %}">{{ favorite_product.product.title }}</a></h5>
+                          <div class="d-flex flex-row">
+                            <div class="text-warning mb-1 me-2">
+                              {% for _ in favorite_product.product.average_rating|range %}
+                                <i class="fa fa-star"></i>
+                              {% endfor %}
+                              {% for _ in favorite_product.product.average_rating|range:5 %}
+                                <i class="far fa-star"></i>
+                              {% endfor %}
+                              <span class="ms-1">{{ favorite_product.product.average_rating }}</span>
+                            </div>
+                          </div>
+
+                          <p class="text mb-4 mb-md-0">{{ favorite_product.product.description }}</p>
+                        </div>
+                        <div class="col-xl-3 col-md-3 col-sm-5">
+                          <div class="d-flex flex-row align-items-center mb-1">
+                            <h4 class="mb-1 me-1">{{ favorite_product.product.price|intcomma }} руб.</h4>
+                          </div>
+                          {% if favorite_product.product.amount > 0 %}
+                            <h6 class="text-success ms-2">В наличии</h6>
+                          {% elif favorite_product.product.amount == 0 %}
+                            <h6 class="text-danger ms-2">Товар закончился</h6>
+                          {% endif %}
+                          <div class="mt-4">
+                            {% if favorite_product.product.id in cart_items_ids %}
+                              <button class="btn btn-primary shadow-0 btn-add-to-cart" disabled="">В корзине</button>
+                            {% else %}
+                              <button class="btn btn-primary shadow-0 btn-add-to-cart" data-product-id="{{ favorite_product.product.id }}">В корзину</button>
+                            {% endif %}
+                            <a href="#!" class="btn btn-light border px-2 icon-hover wishlist-remove" data-product-id="{{ favorite_product.product.id }}"><i class="fa-solid fa-heart-circle-minus fa-lg" style="color: #e32400;"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+            <hr />
+            {% if is_paginated %}
+              {% block pagination %}
+                {% include 'includes/pagination.html' %}
+              {% endblock %}
+            {% endif %}
+          {% else %}
+            <h2 class="d-block py-2 text-center">У вас нет избранных товаров</h2>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('.wishlist-remove').on('click', function (e) {
+        e.preventDefault()
+        var product_id = $(this).data('product-id')
+        var csrfToken = '{{ csrf_token }}'
+    
+        $.ajax({
+          url: '{% url "products:wishlist_manage" %}',
+          method: 'DELETE',
+          data: JSON.stringify({ product_id: product_id }),
+          headers: {
+            'X-CSRFToken': csrfToken
+          },
+          success: function (data) {
+            if (data.status === 'success') {
+              $('#wishlist-count').text(data.wishlist_items_count)
+              $('#favorite-product-' + product_id).remove()
+              if (data.wishlist_items_count === 0) {
+                $('#no-favorites-message').show()
+              }
+            } else if (data.status === 'not_in_favorites') {
+              alert('Товар не был в избранном.')
+            }
+            // Дополнительные действия при успешном удалении из избранного
+          },
+          error: function () {
+            alert('Произошла ошибка при выполнении запроса.')
+          }
+        })
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('.btn-add-to-cart').on('click', function (e) {
+        e.preventDefault()
+        var button = $(this)
+        var product_id = $(this).data('product-id')
+        var csrfToken = '{{ csrf_token }}'
+    
+        $.ajax({
+          url: '{% url "products:cart_manage" %}',
+          method: 'POST',
+          data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: csrfToken
+          },
+          success: function (data) {
+            if (data.status === 'success') {
+              var currentCount = parseInt($('#cart-count').text(), 10)
+              var newCount = currentCount + 1
+              $('#cart-count').text(newCount)
+    
+              button.prop('disabled', true)
+              button.text('В корзине')
+            }
+          },
+          error: function () {
+            alert('Произошла ошибка при добавлении в корзину.')
+          }
+        })
+      })
+    })
+  </script>
+{% endblock %}

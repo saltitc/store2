@@ -1,18 +1,18 @@
+import json
 from typing import Any
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic.base import TemplateView
 from common.views import TitleMixin
 from django.views.generic import ListView, DetailView, FormView
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.views.decorators.http import require_POST
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ProductFilterForm, RatingForm
-from .models import CartItem, Product, ProductCategory, Rating
+from .models import CartItem, Product, ProductCategory, Rating, FavoriteProduct
 
 
 class IndexView(TitleMixin, TemplateView):
@@ -71,7 +71,7 @@ class ProductDetailView(TitleMixin, DetailView):
 
         user = self.request.user
         product = context["product"]
-        is_rated = Rating.objects.filter(user=user, product=product).exists()
+        is_rated = Rating.objects.filter(user=user.id, product=product).exists()
 
         context["is_rated"] = is_rated
         context["form"] = RatingForm
@@ -83,12 +83,78 @@ class RateProductView(FormView):
     form_class = RatingForm
 
     def form_valid(self, form):
-        messages.success(self.request, f"{self.request.user.first_name}, спасибо за оставленную вами оценку!")
         form.save()
+        if (
+            self.request.headers.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
+            or self.request.headers.get("x-requested-with") == "XMLHttpRequest"
+        ):
+            updated_rating = form.cleaned_data["product"].average_rating
+            return JsonResponse(
+                {
+                    "success": True,
+                    "updated_rating": updated_rating,
+                }
+            )
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.headers.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
+            errors = dict(form.errors.items())
+            return JsonResponse({"success": False, "errors": errors})
+        return response
 
     def get_success_url(self):
         return reverse_lazy("products:detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class WishlistView(LoginRequiredMixin, ListView):
+    template_name = "products/wishlist.html"
+    context_object_name = "favorite_products"
+    model = FavoriteProduct
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user=self.request.user)
+        return queryset
+
+
+class WishlistManageView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            if not request.user.is_authenticated:
+                redirect_url = reverse_lazy("users:signin")
+                return JsonResponse({"status": "not_authenticated", "redirect_url": redirect_url})
+            product_id = request.POST.get("product_id")
+            product = Product.objects.get(id=product_id)
+
+            if not FavoriteProduct.objects.filter(user=request.user, product=product).exists():
+                FavoriteProduct.objects.create(user=request.user, product=product)
+                wishlist_items_count = FavoriteProduct.objects.filter(user=request.user).count()
+                return JsonResponse({"status": "success", "wishlist_items_count": wishlist_items_count})
+            else:
+                return JsonResponse({"status": "already_in_favorites"})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            product_id = json.loads(request.body)["product_id"]
+            product = Product.objects.get(id=product_id)
+
+            favorite_product = FavoriteProduct.objects.filter(user=request.user, product=product).first()
+
+            if favorite_product:
+                favorite_product.delete()
+                wishlist_items_count = FavoriteProduct.objects.filter(user=request.user).count()
+                return JsonResponse({"status": "success", "wishlist_items_count": wishlist_items_count})
+            else:
+                return JsonResponse({"status": "not_in_favorites"})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
 
 
 class CartView(ListView):
@@ -102,26 +168,26 @@ class CartView(ListView):
         return queryset
 
 
-@login_required
-def cart_add(request, product_id):
-    product = Product.objects.get(id=product_id)
-    cart_items = CartItem.objects.filter(user=request.user, product=product)
+class CartManageView(View):
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            redirect_url = reverse_lazy("users:signin")
+            return JsonResponse({"status": "not_authenticated", "redirect_url": redirect_url})
+        product_id = request.POST.get("product_id")
+        product = Product.objects.get(id=product_id)
+        cart_items = CartItem.objects.filter(user=request.user.id, product=product_id)
 
-    if not cart_items.exists():
-        CartItem.objects.create(user=request.user, product=product, quantity=1)
-    else:
-        cart_item = cart_items.first()
-        cart_item.quantity += 1
-        cart_item.save()
+        if not cart_items.exists():
+            CartItem.objects.create(user=request.user, product=product, quantity=1)
+        else:
+            cart_item = cart_items.first()
+            cart_item.quantity += 1
+            cart_item.save()
 
-    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+        return JsonResponse({"status": "success"})
 
-
-@login_required
-def cart_remove(request, cart_item_id):
-    cart_item = CartItem.objects.get(id=cart_item_id)
-    cart_item.delete()
-    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+    def delete(self, request, *args, **kwargs):
+        pass
 
 
 @require_POST

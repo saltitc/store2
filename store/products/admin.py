@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, ProductCategory, CartItem, Rating
+from .models import Product, ProductCategory, CartItem, Rating, FavoriteProduct
 
 admin.site.register(ProductCategory)
 
@@ -35,3 +35,12 @@ class RatingAdmin(admin.ModelAdmin):
     readonly_fields = ("rating", "user", "product")
     search_fields = ("rating",)
     ordering = ("-rating",)
+
+
+@admin.register(FavoriteProduct)
+class FavoriteProductAdmin(admin.ModelAdmin):
+    list_display = ("user", "product")
+    fields = ("user", "product")
+    readonly_fields = ("user", "product")
+    search_fields = ("user",)
+    ordering = ("-user",)

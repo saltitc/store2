@@ -1,13 +1,20 @@
-from products.models import CartItem
+from products.models import CartItem, FavoriteProduct
 
 
 def cart_items(request):
     user = request.user
-    return {"cart_items": CartItem.objects.filter(user=user) if user.is_authenticated else []}
+    if user.is_authenticated:
+        items = CartItem.objects.filter(user=user)
+        count = items.total_amount()
+        return {"cart_items": items, "count_of_cart_items": count, "cart_items_ids": set(items.values_list("product__id", flat=True))}
+    return {"cart_items": [], "count_of_cart_items": 0, "cart_items_ids": []}
 
 
-def get_cart_items_count(request):
+def wishlist_items(request):
     user = request.user
-    count = CartItem.objects.filter(user=user.id).total_amount()
-    data = {"count_of_cart_items": count}
-    return data
+    items = FavoriteProduct.objects.filter(user=user.id)
+    return {
+        "wishlist_items": items,
+        "wishlist_items_count": items.count(),
+        "wishlist_items_ids": set(items.values_list("product__id", flat=True)),
+    }

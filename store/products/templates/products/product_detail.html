@@ -32,14 +32,14 @@
             {{ product.title }}
           </h4>
           <div class="d-flex flex-row my-3">
-            <div class="text-warning mb-1 me-2">
+            <div id="rating-stars" class="text-warning mb-1 me-2">
               {% for _ in product.average_rating|range %}
                 <i class="fa fa-star"></i>
               {% endfor %}
               {% for _ in product.average_rating|range:5 %}
               <i class="far fa-star"></i>
               {% endfor %}
-
+              <span class="ms-1">{{ product.average_rating }}</span>
             </div>
           </div>
 
@@ -66,43 +66,172 @@
 
           
           {% if product.amount > 0 %}
-            <a href="{% url "products:cart_add" product.id %}" class="btn btn-success shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> В корзину </a>
-            <a href="#" class="btn btn-primary border border-secondary py-2 icon-hover px-3"><i class="me-1 fa fa-heart fa-lg"></i></a>
+            {% if product.id in cart_items_ids %}
+              <button class="btn btn-success btn-add-to-cart" disabled="">В корзине</button>
+            {% else %}
+               <button class="btn btn-success btn-add-to-cart" data-product-id="{{ product.id }}"><i class="me-1 fa fa-shopping-basket"></i> В корзину</button>
+            {% endif %}
+
+            {% if product.id in wishlist_items_ids %}
+            <button class="btn btn-primary px-3 me-2 btn-add-to-favorites" disabled="" style="">Товар в избранном</button>
+            {% else %}
+              <button class="btn btn-primary px-3 me-2 btn-add-to-favorites" data-product-id="{{ product.id }}">
+                <i class="me-1 fa fa-heart fa-lg"></i>
+              </button>
+            {% endif %}
           {% elif product.amount == 0 %}
-            <a href="#" class="btn btn-primary border border-secondary py-2 icon-hover px-3"> Добавить в избранное <i class="me-1 fa fa-heart fa-lg"></i></a>
+              {% if in_wishlist %}
+                <button class="btn btn-primary px-3 me-2 btn-add-to-favorites" disabled="" style="">Товар в избранном</button>
+              {% else %}
+                <button class="btn btn-primary px-3 me-2 btn-add-to-favorites" data-product-id="{{ product.id }}">
+                  Добавить в избранное <i class="me-1 fa fa-heart fa-lg"></i>
+                </button>
+              {% endif %}
           {% endif %}
           
-          {% if not is_rated %}
-           <div class="rate bg-dark py-3 text-white mt-3">
-            <form method="post" action="{% url 'products:rate' pk=product.id %}">
-                {% csrf_token %}
-                <input type='hidden' name="user" value="{{ user.id }}"/>
-                <input type='hidden' name="product" value="{{ product.id }}"/>
-                <div class="rating"> 
-                    <input type="radio" name="rating" value="5" id="5">
-                    <label for="5">☆</label> 
-                    <input type="radio" name="rating" value="4" id="4">
-                    <label for="4">☆</label> 
-                    <input type="radio" name="rating" value="3" id="3">
-                    <label for="3">☆</label> 
-                    <input type="radio" name="rating" value="2" id="2">
-                    <label for="2">☆</label> 
-                    <input type="radio" name="rating" value="1" id="1">
-                    <label for="1">☆</label>
-                </div>
+          {% if not is_rated and user.is_autheticated%}
+           <div id="ratingForm" class="rate bg-dark py-3 text-white mt-3">
+            <form class="ajax-form" method="post" action="{% url 'products:rate' pk=product.id %}">
+              {% csrf_token %}
+              <input type='hidden' name="user" value="{{ user.id }}"/>
+              <input type='hidden' name="product" value="{{ product.id }}"/>
+              <div class="rating"> 
+                  <input type="radio" name="rating" value="5" id="5">
+                  <label for="5">☆</label> 
+                  <input type="radio" name="rating" value="4" id="4">
+                  <label for="4">☆</label> 
+                  <input type="radio" name="rating" value="3" id="3">
+                  <label for="3">☆</label> 
+                  <input type="radio" name="rating" value="2" id="2">
+                  <label for="2">☆</label> 
+                  <input type="radio" name="rating" value="1" id="1">
+                  <label for="1">☆</label>
+              </div>
 
-                <div class="buttons px-4 mt-0">
-                    <button class="btn btn-success btn-block rating-submit">Оценить</button>
-                </div>
-            </form>
-            {% endif %}
-            </div>
+              <div class="buttons px-4 mt-0">
+                  <button class="btn btn-success btn-block rating-submit" type="button">Оценить</button>
+              </div>
+          </form>
+          </div>
+          {% endif %}
         </div>
       </main>
     </div>
   </div>
 </section>
 <!-- content -->
-
-
 {% endblock  %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $('.btn-add-to-favorites').on('click', function(e) {
+        e.preventDefault();
+        var button = $(this);
+        var product_id = $(this).data('product-id');
+        var csrfToken = '{{ csrf_token }}';
+        $.ajax({
+          url: '{% url "products:wishlist_manage" %}',
+          method: 'POST',
+          data: {
+            product_id: product_id, 
+            csrfmiddlewaretoken: csrfToken
+          },
+          success: function(data) {
+            if (data.status === 'not_authenticated') {
+            window.location.href = data.redirect_url;
+            } else if (data.status === 'success') {
+              $('#wishlist-count').text(data.wishlist_items_count);
+              button.prop('disabled', true);
+              button.text('Товар в избранном');
+            } else if (data.status === 'already_in_favorites') {
+              alert('Товар уже в избранном!');
+            }
+          },
+          error: function() {
+            alert('Произошла ошибка.');
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('.btn-add-to-cart').on('click', function (e) {
+        e.preventDefault()
+        var button = $(this)
+        var product_id = $(this).data('product-id')
+        var csrfToken = '{{ csrf_token }}'
+    
+        $.ajax({
+          url: '{% url "products:cart_manage" %}',
+          method: 'POST',
+          data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: csrfToken
+          },
+          success: function (data) {
+            if (data.status === 'not_authenticated') {
+            window.location.href = data.redirect_url;
+            } else if (data.status === 'success') {
+              var currentCount = parseInt($('#cart-count').text(), 10)
+              var newCount = currentCount + 1
+              $('#cart-count').text(newCount)
+    
+              button.prop('disabled', true)
+              button.text('В корзине')
+            }
+          },
+          error: function () {
+            alert('Произошла ошибка при добавлении в корзину.')
+          }
+        })
+      })
+    })
+  </script>
+  <script>
+  $(document).ready(function () {
+    $('.rating-submit').on('click', function (e) {
+      e.preventDefault();
+
+      var form = $(this).closest('form');
+      var formData = form.serialize();
+
+      $.ajax({
+        url: form.attr('action'),
+        method: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+          if (data.success) {
+            updateRatingBlock(data.updated_rating);
+            hideAndShowElements();
+          } else {
+            // Ошибка валидации формы, обновляем сообщения об ошибках на странице
+            displayFormErrors(form, data.errors);
+          }
+        },
+        error: function () {
+          alert('Произошла ошибка при выполнении запроса.');
+        }
+      });
+    });
+
+    function updateRatingBlock(updatedRating) {
+      var ratingBlock = $('#rating-stars');
+      ratingBlock.empty();
+      for (var i = 0; i < updatedRating; i++) {
+        ratingBlock.append('<i class="fa fa-star"></i>');
+      }
+      for (var i = updatedRating; i < 5; i++) {
+        ratingBlock.append('<i class="far fa-star"></i>');
+      }
+      ratingBlock.append('<span class="ms-1">' + updatedRating + '</span>');
+    }
+
+    function hideAndShowElements() {
+      $('#ratingForm').replaceWith('<div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 50px;">Спасибо за оценку!<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button></div>');
+    };
+  });
+</script>
+{% endblock scripts %}
