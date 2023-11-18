@@ -2,13 +2,12 @@ import json
 from typing import Any
 from django.db.models import Q
 from django.db.models.query import QuerySet
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
 from common.views import TitleMixin
 from django.views.generic import ListView, DetailView, FormView
-from django.views.decorators.http import require_POST
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ProductFilterForm, RatingForm
@@ -175,6 +174,7 @@ class CartManageView(View):
             return JsonResponse({"status": "not_authenticated", "redirect_url": redirect_url})
         product_id = request.POST.get("product_id")
         product = Product.objects.get(id=product_id)
+
         cart_items = CartItem.objects.filter(user=request.user.id, product=product_id)
 
         if not cart_items.exists():
@@ -187,19 +187,45 @@ class CartManageView(View):
         return JsonResponse({"status": "success"})
 
     def delete(self, request, *args, **kwargs):
-        pass
+        if not request.user.is_authenticated:
+            redirect_url = reverse_lazy("users:signin")
+            return JsonResponse({"status": "not_authenticated", "redirect_url": redirect_url})
 
+        product_id = kwargs.get("product_id")
+        try:
+            cart_item = CartItem.objects.get(user=request.user, product=product_id)
+            cart_items = CartItem.objects.filter(user=request.user)
+            quantity = cart_item.quantity
+            cart_item.delete()
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "quantity": quantity,
+                    "total_cost": cart_items.get_total_cart_cost(),
+                }
+            )
+        except CartItem.DoesNotExist as e:
+            return JsonResponse({"status": "error", "error": str(e)})
 
-@require_POST
-def update_cart_item_quantity(request):
-    try:
-        product_id = request.POST.get("product_id")
-        quantity = request.POST.get("quantity")
+    def put(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            redirect_url = reverse_lazy("users:signin")
+            return JsonResponse({"status": "not_authenticated", "redirect_url": redirect_url})
 
-        cart_item = CartItem.objects.get(product_id=product_id, user=request.user)
-        cart_item.quantity = quantity
-        cart_item.save()
-
-        return JsonResponse({"success": True})
-    except Exception as e:
-        return JsonResponse({"success": False, "error": str(e)})
+        product_id = kwargs.get("product_id")
+        try:
+            cart_item = CartItem.objects.get(user=request.user, product=product_id)
+            cart_items = CartItem.objects.filter(user=request.user)
+            quantity = int(request.body.decode("utf-8").split("=")[1])
+            cart_item.quantity = quantity
+            cart_item.save()
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "quantity": quantity,
+                    "item_cost": cart_item.get_item_cost(),
+                    "total_cost": cart_items.get_total_cart_cost(),
+                }
+            )
+        except CartItem.DoesNotExist as e:
+            return JsonResponse({"status": "error", "error": str(e)})

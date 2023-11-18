@@ -1,96 +1,18 @@
+{% extends 'products/base.html' %}
 {% load static %}
 {% load humanize %}
 {% load my_filters %}
-
-{% block css %}
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
-  <link href="{% static 'css/cart.css' %}" rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-{% endblock %}
-
-<section class="h-100 gradient-custom">
-  <div class="container py-5">
-    <div class="row d-flex justify-content-center my-4">
-      {% if cart_items %}
-        <div class="col-md-8">
-          <div class="card mb-4">
-            <div class="card-header py-3">
-              <a href="{% if request.META.HTTP_REFERER %}
-                  {{ request.META.HTTP_REFERER }}
-                {% else %}
-                  {% url 'products:list' %}
-                {% endif %}"
-                class="btn btn-info btn-lg action-button"
-                type="button">
-                Назад
-              </a>
-            </div>
-            <div class="card-header py-3">
-              <h5 class="mt-3 mb-3 d-flex justify-content-between align-items-center mb-3">Корзина <span class="badge badge-secondary badge-pill">{{ cart_items.total_amount }}</span></h5>
-            </div>
-            <div class="card-body">
-              {% for cart_item in cart_items %}
-                <!-- Cart item -->
-                <div class="row">
-                  <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                    <!-- Image -->
-                    <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                      <img src="{{ cart_item.product.image.url }}" class="w-100" />
-                      <a href="{% url 'products:detail' cart_item.product.id %}"><div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div></a>
-                    </div>
-                    <!-- Image -->
-                  </div>
-
-                  <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                    <!-- Data -->
-                    <p>
-                      <strong>{{ cart_item.product.title }}</strong>
-                    </p>
-                    <div class="text-warning mb-1 me-2">
-                      {% for _ in cart_item.product.average_rating|range %}
-                        <i class="fa fa-star"></i>
-                      {% endfor %}
-                      {% for _ in cart_item.product.average_rating|range:5 %}
-                        <i class="far fa-star"></i>
-                      {% endfor %}
-                    </div>
-                    <p>{{ cart_item.product.description }}</p>
-
-                    <form action="#" target="_blank">
-                      <button type="submit" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-toggle="tooltip" title="Remove item"><i class="fas fa-trash"></i></button>
-                    </form>
-
-                    <!-- Data -->
-                  </div>
-
-                  <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                    <!-- Quantity -->
-                    <div class="d-flex mb-4" style="max-width: 300px">
-                      <button class="btn btn-primary px-3 me-2" onclick="updateQuantity({{ cart_item.product.id }}, -1)"><i class="fas fa-minus"></i></button>
-
-                      <div class="form-outline">
-                        <input id="quantity" min="0" name="quantity" value="{{ cart_item.quantity }}" type="number" class="form-control" />
-                        <label class="form-label" for="quantity">Количество</label>
-                      </div>
-
-                      <button class="btn btn-primary px-3 ms-2" onclick="updateQuantity({{ cart_item.product.id }}, 1)"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <!-- Quantity -->
-
-                    <!-- Price -->
-                    <p class="text-start text-md-center">
-                      <strong>{{ cart_item.get_item_cost|intcomma }} руб.</strong>
-                    </p>
-                    <!-- Price -->
-                  </div>
-                </div>
-                <!-- Cart item -->
-                <hr class="my-4" />
-              {% endfor %}
-            </div>
+{% block content %}
+  <!-- sidebar + content -->
+  <section class="mt-4">
+    <div class="container">
+        <div id="no-cart-items-message" class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 50px; display: none;">
+            Вы удалили все товары из корзины
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
           </div>
-        </div>
-        <div class="col-md-4">
+      {% if cart_items %}   
+      <div class="row">
+        <div id='cart-cost' class="col-md-3">
           <div class="card mb-4">
             <div class="card-header py-3">
               <h5 class="mb-0">Стоимость</h5>
@@ -98,82 +20,206 @@
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                  Товары
-                  <span>{{ cart_items.get_total_cart_cost|intcomma }} руб.</span>
+                  Кол-во товаров:
+                  <span id='cart-cost-amount'>{{ count_of_cart_items }} шт.</span>
                 </li>
-
-                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-                  <div>
-                    <strong>Итоговая стоимость</strong>
-                    <strong><p class="mb-0">(включая НДС)</p></strong>
-                  </div>
-                  <span><strong>{{ cart_items.get_total_cart_cost|intcomma }} руб.</strong></span>
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Итого:
+                  <span id='cart-total-cost'>{{ cart_items.get_total_cart_cost|intcomma:1 }} руб.</span>
                 </li>
               </ul>
 
               <form action="{% url 'orders:create' %}" target="_blank">
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Перейти к оформлению</button>
+                <button type="submit" class="btn btn-primary btn-lg-3 btn-block mt-2">Перейти к оформлению</button>
               </form>
               <hr />
-              <div class="card mb-4">
-                <div class="card-body p-4 d-flex flex-row">
+              <div class="card mb-3">
+                <div class="card-body p-3 d-flex flex-row">
                   <div class="form-outline flex-fill">
-                    <input type="text" id="" class="form-control form-control-lg" />
-                    <label class="form-label" for="">Промокод</label>
+                    <input type="text" id="" class="form-control form-control-lg-3" placeholder="Промокод" />
+                    {% comment %} <label class="form-label" for=""></label> {% endcomment %}
+                    <br />
+                    <button type="button" class="btn btn-outline-success btn-lg-3 ms-3">Добавить</button>
                   </div>
-                  <button type="button" class="btn btn-outline-success btn-lg ms-3">Добавить</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <!-- content -->
+        <div class="col-lg-9">
+          {% for cart_item in cart_items %}
+            <div id="cart-item-{{ cart_item.product.id }}" class="row justify-content-center mb-3">
+              <div class="col-md-12">
+                <div class="card shadow-0 border rounded-3">
+                  <div class="card-body">
+                    <div class="row g-0">
+                      <div class="col-xl-3 col-md-4 d-flex justify-content-center">
+                        <div class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                          <img src="{{ cart_item.product.image.url }}" class="w-100" />
+                          <a href="#!">
+                            <div class="hover-overlay">
+                              <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-md-5 col-sm-7">
+                        <h5>{{ cart_item.product.title }}</h5>
+                        <div class="d-flex flex-row">
+                          <div class="text-warning mb-1 me-2">
+                            {% for _ in cart_item.product.average_rating|range %}
+                              <i class="fa fa-star"></i>
+                            {% endfor %}
+                            {% for _ in cart_item.product.average_rating|range:5 %}
+                              <i class="far fa-star"></i>
+                            {% endfor %}
+                            <span class="ms-1">{{ cart_item.product.average_rating }}</span>
+                          </div>
+                        </div>
+
+                        <p class="text mb-4 mb-md-0">{{ cart_item.product.description }}</p>
+                      </div>
+                      <div class="col-xl-3 col-md-3 col-sm-5">
+                        <div class="d-flex flex-row align-items-center mb-1">
+                          <h4 id='item-cost-{{ cart_item.product.id }}' class="mb-1 me-1">{{ cart_item.get_item_cost|intcomma }} руб.</h4>
+                        </div>
+                        {% if cart_item.product.amount > 0 %}
+                          <h6 class="text-success ms-2">В наличии</h6>
+                        {% elif cart_item.product.amount == 0 %}
+                          <h6 class="text-danger ms-2">Товар закончился</h6>
+                        {% endif %}
+                        <!-- Quantity -->
+                        <div class="input-group mb-3">
+                          <button class="btn btn-primary btn-sm" onclick="updateQuantity({{ cart_item.product.id }}, -1)"><i class="fas fa-minus"></i></button>
+                          <input id="quantity-{{ cart_item.product.id }}" min="0" name="quantity" value="{{ cart_item.quantity }}" type="number" class="form-control" />
+                          <button class="btn btn-primary btn-sm" onclick="updateQuantity({{ cart_item.product.id }}, 1)"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <!-- Quantity -->
+                        <div class="mt-4">
+                          {% if cart_item.product.id in wishlist_items_ids %}
+                            <button class="btn btn-success shadow-0" disabled="true" type="button"><i class="fas fa-heart fa-lg px-1"></i></button>
+                          {% else %}
+                            <button class="btn btn-primary shadow-0 btn-add-to-favorites" data-product-id="{{ cart_item.product.id }}" type="button"><i class="fas fa-heart fa-lg px-1"></i></button>
+                          {% endif %}
+                          <button class="btn btn-danger shadow-0" type="button" onclick="removeFromCart({{ cart_item.product.id }})"><i class="fas fa-trash fa-lg px-1"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <hr />
+        </div>
+      </div>
       {% else %}
-        <div class="container-fluid mt-100">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-body cart">
-                  <div class="col-sm-12 empty-cart-cls text-center">
-                    <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3" />
-                    <h3><strong>Ваша корзина пуста</strong></h3>
-                    <h4>Добавьте в нее что нибудь, чтобы сделать нас счастливее :)</h4>
-                    <a href="{% url 'products:products' %}" class="btn btn-success cart-btn-transform m-3" data-abc="true">продолжить покупки</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endif %}
+      <h2 class="mb-0 text-center">Корзина пуста</h2>
+      {% endif %} 
     </div>
-  </div>
-</section>
+  </section>
+{% endblock %}
 
 {% block scripts %}
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
   <script src="{% static 'fontawesome/fontawesome-icons.js' %}" crossorigin="anonymous"></script>
   <script>
     function updateQuantity(productId, change) {
-      var quantityInput = document.getElementById('quantity')
+      var quantityInput = document.getElementById('quantity-' + productId)
+    
       var newQuantity = parseInt(quantityInput.value) + change
-    
       newQuantity = Math.max(newQuantity, 0)
-    
       quantityInput.value = newQuantity
-    
+      var csrfToken = '{{ csrf_token }}'
+      if (newQuantity === 0) {
+        removeFromCart(productId)
+      } else {
+        $.ajax({
+          url: '{% url "products:remove_from_cart" product_id=0 %}'.replace('0', productId),
+          method: 'PUT',
+          headers: {
+            'X-CSRFToken': csrfToken
+          },
+          data: {
+            quantity: newQuantity
+          },
+          success: function (data) {
+            var currentCount = parseInt($('#cart-count').text(), 10)
+            var newCount = currentCount + change
+            $('#cart-count').text(newCount)
+            $('#cart-cost-amount').text(newCount + " шт.")
+            $('#cart-total-cost').text(data.total_cost + ' руб.')
+            $('#item-cost-' + productId).text(data.item_cost + ' руб.')
+
+            
+          },
+          error: function (error) {
+            alert('Произошла ошибка при выполнении запроса.')
+          }
+        })
+      }
+    }
+    function removeFromCart(productId) {
       var csrfToken = '{{ csrf_token }}'
     
       $.ajax({
-        url: '{% url "products:update_quantity" %}',
-        method: 'POST',
-        data: {
-          product_id: productId,
-          quantity: newQuantity,
-          csrfmiddlewaretoken: csrfToken
+        url: '{% url "products:remove_from_cart" product_id=0 %}'.replace('0', productId),
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': csrfToken
         },
-        success: function (data) {},
-        error: function (error) {}
+        success: function (data) {
+          if (data.status === 'success') {
+            $('#cart-item-' + productId).remove()
+            var currentCount = parseInt($('#cart-count').text(), 10)
+            var newCount = currentCount - data.quantity
+            $('#cart-count').text(newCount)
+            $('#cart-cost-amount').text(newCount + " шт.")
+            $('#cart-total-cost').text(data.total_cost + ' руб.');
+            if (newCount === 0) {
+              $('#no-cart-items-message').show()
+              $('#cart-cost').remove()
+            }
+          } else {
+            alert('Произошла ошибка при удалении товара из корзины.')
+          }
+        },
+        error: function () {
+          alert('Произошла ошибка при выполнении запроса.')
+        }
       })
     }
+  </script>
+   <script>
+    $(document).ready(function () {
+      $('.btn-add-to-favorites').on('click', function (e) {
+        e.preventDefault()
+        var button = $(this)
+        var product_id = $(this).data('product-id')
+        var csrfToken = '{{ csrf_token }}'
+        $.ajax({
+          url: '{% url "products:wishlist_manage" %}',
+          method: 'POST',
+          data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: csrfToken
+          },
+          success: function (data) {
+            if (data.status === 'not_authenticated') {
+            window.location.href = data.redirect_url;
+            } else if (data.status === 'success') {
+              $('#wishlist-count').text(data.wishlist_items_count)
+              button.prop('disabled', true)
+              button.replaceWith('<button class="btn btn-success shadow-0" disabled="true" type="button"><i class="fas fa-heart fa-lg px-1"></i></button>')
+            } else if (data.status === 'already_in_favorites') {
+              alert('Товар уже в избранном!')
+            }
+          },
+          error: function () {
+            alert('Произошла ошибка.')
+          }
+        })
+      })
+    })
   </script>
 {% endblock %}

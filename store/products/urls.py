@@ -8,7 +8,7 @@ from .views import (
     CartView,
     WishlistView,
     CartManageView,
-    update_cart_item_quantity,
+    # update_cart_item_quantity,
     WishlistManageView,
 )
 
@@ -23,5 +23,6 @@ urlpatterns = [
     path("wishlist/manage", WishlistManageView.as_view(), name="wishlist_manage"),
     path("cart/", CartView.as_view(), name="cart"),
     path("cart/manage/", CartManageView.as_view(), name="cart_manage"),
-    path("update_quantity/", update_cart_item_quantity, name="update_quantity"),
+    path("cart/manage/<int:product_id>/", CartManageView.as_view(), name="remove_from_cart"),
+    # path("update_quantity/", update_cart_item_quantity, name="update_quantity"),
 ]

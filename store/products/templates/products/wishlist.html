@@ -9,10 +9,10 @@
 {% block content %}
   <section class="">
     <div class="container">
-      <div class="row">
-        <!-- content -->
-        <div class="col-lg-9">
-          {% if favorite_products %}
+      {% if favorite_products %}
+        <div class="row">
+          <!-- content -->
+          <div class="col-lg-9">
             <h2 class="d-block py-2 text-center">Избранное</h2>
             <div id="no-favorites-message" class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 50px; display: none;">
               Вы удалили все избранные товары
@@ -81,11 +81,11 @@
                 {% include 'includes/pagination.html' %}
               {% endblock %}
             {% endif %}
-          {% else %}
-            <h2 class="d-block py-2 text-center">У вас нет избранных товаров</h2>
-          {% endif %}
+          </div>
         </div>
-      </div>
+      {% else %}
+        <h2 class="mb-0 text-center">У вас нет избранных товаров</h2>
+      {% endif %}
     </div>
   </section>
 {% endblock %}
