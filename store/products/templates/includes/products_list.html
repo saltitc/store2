@@ -4,7 +4,7 @@
 {% for product in products %}
   <div class="col-lg-4 col-md-6 mb-4">
     <div class="card h-100">
-      <a href="#"><img class="card-img-top" src="{{ product.image.url }}" alt="" /></a>
+      <a href="#"><img class="card-img-top" src="{{ product.image.url }}" alt="" width="253" height="340"/></a>
       <div class="card-body">
         <h4 class="card-title"><a href="{% url 'products:detail' product.id %}">{{ product.title }}</a></h4>
         <h5>{{ product.price|intcomma }} руб.</h5>

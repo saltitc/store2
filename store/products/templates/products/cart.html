@@ -65,7 +65,7 @@
                         </div>
                       </div>
                       <div class="col-xl-6 col-md-5 col-sm-7">
-                        <h5>{{ cart_item.product.title }}</h5>
+                        <a href="{% url "products:detail" cart_item.product.id %}"><h5>{{ cart_item.product.title }}</h5></a>
                         <div class="d-flex flex-row">
                           <div class="text-warning mb-1 me-2">
                             {% for _ in cart_item.product.average_rating|range %}

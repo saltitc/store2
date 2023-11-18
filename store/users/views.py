@@ -1,20 +1,18 @@
-from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.views import (LoginView, PasswordResetConfirmView,
+                                       PasswordResetView)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import HttpResponseRedirect, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.contrib import messages
-
 
 from common.views import TitleMixin
-from products.models import CartItem
 
-from .forms import UserLoginForm, UserProfileForm, UserRegistrationForm, UserPasswordResetForm, UserSetPasswordForm
+from .forms import (UserLoginForm, UserPasswordResetForm, UserProfileForm,
+                    UserRegistrationForm, UserSetPasswordForm)
 from .models import EmailVerification
-from django.contrib.auth import get_user_model
-
 
 User = get_user_model()
 

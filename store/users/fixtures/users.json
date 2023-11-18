@@ -1,0 +1,24 @@
+[
+    {
+        "model": "users.user",
+        "pk": 10,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$XDxKZmc1gBFzq9lz3cnScQ$qpoYKBQeszoo1ULgDmxGtJdzswc302ke4fvSO4U8AZo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "test_user",
+            "first_name": "Тестовый",
+            "last_name": "Пользователь",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-11-18T20:03:18.611Z",
+            "phone": "89999999999",
+            "image": "",
+            "gender": "M",
+            "is_verified_email": false,
+            "email": "test_user@example.com",
+            "groups": [],
+            "user_permissions": []
+        }
+    }
+]

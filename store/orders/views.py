@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-
+import stripe
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -9,7 +9,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
-import stripe
+
 from common.views import TitleMixin
 from orders.models import Order
 from products.models import CartItem

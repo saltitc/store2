@@ -1,5 +1,7 @@
 from typing import Any
+
 from django import forms
+
 from .models import ProductCategory, Rating
 
 

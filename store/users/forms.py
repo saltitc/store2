@@ -1,16 +1,13 @@
-from users.tasks import send_email_verification
-from django import forms
-from django.contrib.auth.forms import (
-    AuthenticationForm,
-    UserChangeForm,
-    UserCreationForm,
-)
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
-from django.contrib.auth import password_validation
-from django.conf import settings
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
-from django.contrib.auth import get_user_model
+from django import forms
+from django.conf import settings
+from django.contrib.auth import get_user_model, password_validation
+from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
+                                       SetPasswordForm, UserChangeForm,
+                                       UserCreationForm)
+
+from users.tasks import send_email_verification
 
 User = get_user_model()
 

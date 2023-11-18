@@ -1,80 +1,240 @@
 [
-  {
-    "model": "products.product",
-    "pk": 1,
-    "fields": {
-      "title": "Худи черного цвета с монограммами adidas Originals",
-      "description": "Мягкая ткань для свитшотов. Стиль и комфорт – это образ жизни.",
-      "price": "6090.00",
-      "amount": 10,
-      "image": "products_images/Adidas-hoodie.png",
-      "category": 2,
-      "rating": 5
+    {
+        "model": "products.product",
+        "pk": 1,
+        "fields": {
+            "title": "Худи черного цвета с монограммами adidas Originals",
+            "description": "Мягкая ткань для свитшотов. Стиль и комфорт – это образ жизни.",
+            "price": "6090.00",
+            "amount": 10,
+            "image": "products_images/Adidas-hoodie.png",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1OB0LBLe0mO65rI5vsyzIUSs"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 2,
+        "fields": {
+            "title": "Синяя куртка The North Face",
+            "description": "Гладкая ткань. Водонепроницаемое покрытие. Легкий и теплый пуховый наполнитель.",
+            "price": "23725.00",
+            "amount": 10,
+            "image": "products_images/Blue-jacket-The-North-Face.png",
+            "category": 3,
+            "average_rating": 1,
+            "stripe_product_price_id": "price_1OB0LCLe0mO65rI5h0XXlWAm"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 3,
+        "fields": {
+            "title": "Коричневый спортивный oversized-топ ASOS DESIGN",
+            "description": "Материал с плюшевой текстурой. Удобный и мягкий.",
+            "price": "3390.00",
+            "amount": 10,
+            "image": "products_images/Brown-sports-oversized-top-ASOS-DESIGN.png",
+            "category": 2,
+            "average_rating": 1,
+            "stripe_product_price_id": "price_1OB0LDLe0mO65rI50Orwcrjr"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 4,
+        "fields": {
+            "title": "Черный рюкзак Nike Heritage",
+            "description": "Плотная ткань. Легкий материал.",
+            "price": "2340.00",
+            "amount": 0,
+            "image": "products_images/Black-Nike-Heritage-backpack.png",
+            "category": 4,
+            "average_rating": 1,
+            "stripe_product_price_id": "price_1OB0LDLe0mO65rI5DbowfthR"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 5,
+        "fields": {
+            "title": "Черные туфли на платформе с 3 парами люверсов Dr Martens 1461 Bex",
+            "description": "Гладкий кожаный верх. Натуральный материал.",
+            "price": "13590.00",
+            "amount": 10,
+            "image": "products_images/Black-Dr-Martens-shoes.png",
+            "category": 1,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1OB0LELe0mO65rI5D8XFppRR"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 6,
+        "fields": {
+            "title": "Темно-синие широкие строгие брюки ASOS DESIGN",
+            "description": "Легкая эластичная ткань сирсакер Фактурная ткань.",
+            "price": "2890.00",
+            "amount": 10,
+            "image": "products_images/Dark-blue-wide-leg-ASOs-DESIGN-trousers.png",
+            "category": 3,
+            "average_rating": 3,
+            "stripe_product_price_id": "price_1OB0LFLe0mO65rI5NkzHx8ot"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 7,
+        "fields": {
+            "title": "Пальто BRMSK",
+            "description": "Пальто двубортной модели с английским воротником имеет подкладку и застёгивается на пуговицы.",
+            "price": "17900.00",
+            "amount": 3,
+            "image": "products_images/MP002XW0JTFL_20568945_1_v1.jpeg",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODu7oLe0mO65rI50eQlvcO3"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 8,
+        "fields": {
+            "title": "Пуховик ультралегкий компактный UNIQLO",
+            "description": "Ультралегкая компактная пуховая куртка изготовлена из натурального пуха премиального качества (Fill Power 640), который удерживает воздух, создавая превосходный теплоизоляционный эффект.",
+            "price": "5599.00",
+            "amount": 3,
+            "image": "products_images/RTLABW755501_17824771_1_v3_2x.jpg",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuFpLe0mO65rI52Ztkoy1U"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 9,
+        "fields": {
+            "title": "Сумка UNIQLO",
+            "description": "Сумка из 100%-го хлопка, универсальная и компактная. Сделайте шаг навстречу экологичному будущему.",
+            "price": "179.00",
+            "amount": 5,
+            "image": "products_images/RTLABW784501_17829195_1_v2.jpg",
+            "category": 4,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuGhLe0mO65rI5G1aFNw2Y"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 10,
+        "fields": {
+            "title": "Брюки трикотажные UNIQLO",
+            "description": "Трикотажные брюки из мягкого и прочного материала. Дополнены карманами и эластичным поясом со шнурком, который позволяет регулировать посадку.",
+            "price": "2999.00",
+            "amount": 5,
+            "image": "products_images/RTLABW763401_17825244_1_v2_2x.jpg",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuHSLe0mO65rI54NJ86tPk"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 11,
+        "fields": {
+            "title": "Футболка UT My Life with Animals",
+            "description": "Хлопок - 100%",
+            "price": "1200.00",
+            "amount": 4,
+            "image": "products_images/RTLACK859401_19524438_1_v1_2x.jpg",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuIxLe0mO65rI5yLHmL8rj"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 12,
+        "fields": {
+            "title": "Водолазка из экстратонкой мериносовой шерсти",
+            "description": "Водолазка в рубчик изготовлена из невероятно мягкой 100%-й шерсти с легким блестящим отливом. Благодаря тонким шерстяным волокнам материал отличается гладкой фактурой.",
+            "price": "3999.00",
+            "amount": 15,
+            "image": "products_images/RTLACB812101_18309262_1_v2_2x.jpg",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuJjLe0mO65rI5kpJfyyq8"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 13,
+        "fields": {
+            "title": "Кроссовки Reebok NANO X3",
+            "description": "Кроссовки выполнены из текстиля. Технология Lift and Run заключена в куполообразном элементе внутри промежуточной подошвы. Элемент сжимается под нагрузкой при поднятии вами тяжестей, создавая таким образом устойчивую платформу, и смягчается при резком отталкивании, обеспечивая возврат энергии и амортизацию.",
+            "price": "12200.00",
+            "amount": 5,
+            "image": "products_images/RTLACZ462901_21132036_1_v1.jpg",
+            "category": 1,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuKwLe0mO65rI5fDoaaK5L"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 14,
+        "fields": {
+            "title": "Кроссовки Reebok NANO X3 ADVENTURE",
+            "description": "Универсальные кроссовки Nano X3 Adventure для тренировок на улице, активного отдыха, легкого хайкинга также подойдут тем, кто выбирает технологичную обувь в стиле outdoor для повседневного использования.",
+            "price": "18999.00",
+            "amount": 5,
+            "image": "products_images/RTLACY310101_20974410_1_v1.jpg",
+            "category": 1,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuLtLe0mO65rI5doGfx1xW"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 15,
+        "fields": {
+            "title": "Шорты спортивные Calvin Klein ICON WO - WOVEN SHORT",
+            "description": "Полиэстер - 86%, Эластан - 14%",
+            "price": "8699.00",
+            "amount": 6,
+            "image": "products_images/RTLACY826301_21285328_1_v1_2x.jpg",
+            "category": 2,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuOqLe0mO65rI5CUNXkJ5c"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 16,
+        "fields": {
+            "title": "Часы Cerutti 1881 CIWLG2226202",
+            "description": "Кварцевые часы Cerruti CIWLG2226202 из коллекции CORNIGLIA с дополнительной деталью в виде цепочки с подвесками в форме ключа, клевера и бабочки.",
+            "price": "28750.00",
+            "amount": 5,
+            "image": "products_images/RTLACJ099001_19125257_1_v2_2x.jpg",
+            "category": 4,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuPtLe0mO65rI59r0GAMIQ"
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 17,
+        "fields": {
+            "title": "Кольцо Sokolov",
+            "description": "Простое обручальное кольцо. Покрытие: Золочение",
+            "price": "3750.00",
+            "amount": 5,
+            "image": "products_images/MPJWLXU0002W_20938852_1_v2.jpg",
+            "category": 5,
+            "average_rating": 5,
+            "stripe_product_price_id": "price_1ODuR7Le0mO65rI5D0xtPlK8"
+        }
     }
-  },
-  {
-    "model": "products.product",
-    "pk": 2,
-    "fields": {
-      "title": "Синяя куртка The North Face",
-      "description": "Гладкая ткань. Водонепроницаемое покрытие. Легкий и теплый пуховый наполнитель.",
-      "price": "23725.00",
-      "amount": 10,
-      "image": "products_images/Blue-jacket-The-North-Face.png",
-      "category": 3,
-      "rating": 5
-    }
-  },
-  {
-    "model": "products.product",
-    "pk": 3,
-    "fields": {
-      "title": "Коричневый спортивный oversized-топ ASOS DESIGN",
-      "description": "Материал с плюшевой текстурой. Удобный и мягкий.",
-      "price": "3390.00",
-      "amount": 10,
-      "image": "products_images/Brown-sports-oversized-top-ASOS-DESIGN.png",
-      "category": 2,
-      "rating": 5
-    }
-  },
-  {
-    "model": "products.product",
-    "pk": 4,
-    "fields": {
-      "title": "Черный рюкзак Nike Heritage",
-      "description": "Плотная ткань. Легкий материал.",
-      "price": "2340.00",
-      "amount": 10,
-      "image": "products_images/Black-Nike-Heritage-backpack.png",
-      "category": 4,
-      "rating": 5
-    }
-  },
-  {
-    "model": "products.product",
-    "pk": 5,
-    "fields": {
-      "title": "Черные туфли на платформе с 3 парами люверсов Dr Martens 1461 Bex",
-      "description": "Гладкий кожаный верх. Натуральный материал.",
-      "price": "13590.00",
-      "amount": 10,
-      "image": "products_images/Black-Dr-Martens-shoes.png",
-      "category": 1,
-      "rating": 5
-    }
-  },
-  {
-    "model": "products.product",
-    "pk": 6,
-    "fields": {
-      "title": "Темно-синие широкие строгие брюки ASOS DESIGN",
-      "description": "Легкая эластичная ткань сирсакер Фактурная ткань.",
-      "price": "2890.00",
-      "amount": 10,
-      "image": "products_images/Dark-blue-wide-leg-ASOs-DESIGN-trousers.png",
-      "category": 3,
-      "rating": 5
-    }
-  }
 ]

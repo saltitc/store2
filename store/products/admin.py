@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, ProductCategory, CartItem, Rating, FavoriteProduct
+from .models import CartItem, FavoriteProduct, Product, ProductCategory, Rating
 
 admin.site.register(ProductCategory)
 
@@ -17,7 +17,7 @@ class ProductAdmin(admin.ModelAdmin):
         "category",
         "average_rating",
     )
-    readonly_fields = ("description",)
+    readonly_fields = ("stripe_product_price_id",)
     search_fields = ("title",)
     ordering = ("-title",)
 

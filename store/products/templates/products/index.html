@@ -1,22 +1,36 @@
 {% extends 'products/base.html' %}
 {% load static %}
 
-
 {% block cta %}
-<div class="container hero" style="padding-top: 20%;">
+  <div class="container hero" style="padding-top: 5%;">
     <div class="row">
-        <div class="col-12 col-lg-6 col-xl-5 offset-xl-1">
-            <h1>Lorem ipsum</h1>
-            <p> Etiam lobortis pulvinar elit sit amet rhoncus.
-                Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-            <a href="{% url 'products:products' %}" class="btn btn-dark btn-lg action-button" type="button">
-                Посмотреть каталог
-            </a>
+      <div class="col-12 col-lg-6 col-xl-7 offset-xl-1">
+        <h1>Интернет магазин</h1>
+        <p>Данный проект сделан для демонстрации рекрутерам. 
+            Проект работает на следующих <strong>технологиях и сервисах</strong>: Django, Bootstrap 5 (HTML, CSS, JS), AJAX, PostgreSQL, Redis, Celery, Nginx, Gunicorn, GitHub OAuth 2.0, Stripe, Yandex SMTP, Google ReCaptcha.</p>
+        <p>
+          Вы можете создать свой аккаунт, привязав эл. почту, на которую придет письмо для подтверждения аккаунта. Или войти в уже <strong>существующий аккаунт</strong> (логин: test_user, пароль: test_password). При оплате заказа используйте <strong>тестовый номер банковской карты</strong> (4242 4242 4242 4242), остальные данные можете ввести любые.
+        </p>
+        <div>
+          <strong>Основные возможности сайта:</strong>
+          <ul>
+            <li>Авторизация/регистрация</li>
+            <li>Добавление и удаление товара из корзины (AJAX запросы)</li>
+            <li>Добавление и удаление товара из избранного (AJAX запросы)</li>
+            <li>Оценка товаров (AJAX запросы)</li>
+            <li>Профиль пользователя и его редактирование</li>
+            <li>Оформление заказа и оплата через Stripe (используйте тестовую карту!)</li>
+          </ul>
         </div>
+        <p>Проект не является полностью продуманным и функциональным как например Lamoda. 
+            В нем есть свои недостатки и недоработки, но несмотря на это, я надеюсь вам понравится)</p>
+
+        <a href="{% url 'products:products' %}" class="btn btn-dark btn-lg action-button" type="button">Посмотреть каталог</a>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}
 
-
 {% block content %}
+
 {% endblock %}

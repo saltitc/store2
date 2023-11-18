@@ -1,8 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+
+from products.admin import CartItemAdmin
 
 from .models import EmailVerification
-from products.admin import CartItemAdmin
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
