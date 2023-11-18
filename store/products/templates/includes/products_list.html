@@ -29,7 +29,7 @@
         {% endif %}
       </div>
       <div class="card-footer text-center">
-        {% if product.id in favorite_product_ids %}
+        {% if product.id in wishlist_items_ids %}
           <button class="btn btn-outline-primary btn-add-to-favorites" disabled="">В избранном</button>
         {% else %}
           <button class="btn btn-outline-primary btn-add-to-favorites" data-product-id="{{ product.id }}">Добавить в избранное</button>

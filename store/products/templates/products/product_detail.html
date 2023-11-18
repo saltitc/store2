@@ -89,7 +89,7 @@
               {% endif %}
           {% endif %}
           
-          {% if not is_rated and user.is_autheticated%}
+          {% if not is_rated and user.is_authenticated %}
            <div id="ratingForm" class="rate bg-dark py-3 text-white mt-3">
             <form class="ajax-form" method="post" action="{% url 'products:rate' pk=product.id %}">
               {% csrf_token %}

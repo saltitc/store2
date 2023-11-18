@@ -24,5 +24,4 @@ urlpatterns = [
     path("cart/", CartView.as_view(), name="cart"),
     path("cart/manage/", CartManageView.as_view(), name="cart_manage"),
     path("cart/manage/<int:product_id>/", CartManageView.as_view(), name="remove_from_cart"),
-    # path("update_quantity/", update_cart_item_quantity, name="update_quantity"),
 ]
